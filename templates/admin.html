@@ -1,62 +1,135 @@
-
 <!doctype html>
 <html lang="en">
-<head>
-  <meta charset="utf-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>Comment Tracking Dashboard</title>
-  <style>
-    body { font-family: sans-serif; margin: 24px; }
-    .comment { border: 1px solid #ddd; padding: 16px;
-               margin-bottom: 16px; border-radius: 8px; }
-    .metadata { color: #555; font-size: 14px; }
-    .comment-text { white-space: pre-wrap; overflow-wrap: anywhere; }
-  </style>
-</head>
-<body>
-  <h1>Blog Comments</h1>
-  <p>IP and location data is restricted to authorized admins.</p>
-
-  <form method="post" action="{{ url_for('admin_logout') }}">
-    <input type="hidden" name="csrf_token" value="{{ csrf_token }}">
-    <button type="submit">Log out</button>
-  </form>
-
-  {% for item in comments %}
-    <article class="comment">
-      <h2>{{ item.name }}</h2>
-      <p class="comment-text">{{ item.comment }}</p>
-
-      <p class="metadata">
-        IP: {{ item.ip_address or "Unavailable" }}<br>
-        Country: {{ item.country or "Unknown" }}
-        ({{ item.country_code or "N/A" }})<br>
-        Region: {{ item.region or "Unknown" }}<br>
-        City: {{ item.city or "Unknown" }}<br>
-        Submitted: {{ item.created_at }}<br>
-        Status: {{ item.status }}
-      </p>
-
-      {% if item.status != "approved" %}
-        <form method="post"
-              action="{{ url_for('approve_comment',
-                                  comment_id=item._id|string) }}">
-          <input type="hidden" name="csrf_token"
-                 value="{{ csrf_token }}">
-          <button type="submit">Approve</button>
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Comment Admin | AI Breach Tracker</title>
+    <style>
+      body {
+        margin: 0;
+        background: #07111f;
+        color: #e8eff8;
+        font:
+          15px/1.5 system-ui,
+          sans-serif;
+      }
+      .wrap {
+        max-width: 1000px;
+        margin: auto;
+        padding: 25px 16px;
+      }
+      header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        gap: 12px;
+        flex-wrap: wrap;
+      }
+      .card {
+        background: #0e1b2c;
+        border: 1px solid #24364d;
+        border-radius: 14px;
+        padding: 18px;
+        margin: 15px 0;
+      }
+      .muted {
+        color: #9aacc2;
+        font-size: 0.85rem;
+      }
+      .comment {
+        white-space: pre-wrap;
+        overflow-wrap: anywhere;
+      }
+      .actions {
+        display: flex;
+        gap: 8px;
+        margin-top: 14px;
+      }
+      button {
+        border: 0;
+        border-radius: 8px;
+        padding: 9px 13px;
+        font-weight: 700;
+        cursor: pointer;
+      }
+      .approve {
+        background: #42d6c5;
+        color: #062126;
+      }
+      .delete {
+        background: #522c35;
+        color: #ffd9dd;
+      }
+      .flash {
+        padding: 10px;
+        background: #142c3c;
+        border-radius: 8px;
+        margin: 10px 0;
+      }
+      a {
+        color: #42d6c5;
+      }
+    </style>
+  </head>
+  <body>
+    <div class="wrap">
+      <header>
+        <div>
+          <h1>Comment moderation</h1>
+          <p class="muted">
+            Review pending comments and manage approved comments.
+          </p>
+        </div>
+        <form method="post" action="{{ url_for('admin_logout') }}">
+          <input
+            type="hidden"
+            name="csrf_token"
+            value="{{ csrf_token() }}"
+          /><button>Sign out</button>
         </form>
-      {% endif %}
-
-      <form method="post"
-            action="{{ url_for('delete_comment',
-                                comment_id=item._id|string) }}">
-        <input type="hidden" name="csrf_token"
-               value="{{ csrf_token }}">
-        <button type="submit">Delete comment</button>
-      </form>
-    </article>
-  {% else %}
-    <p>No comments found.</p>
-  {% endfor %}
-</body>
+      </header>
+      {% with messages = get_flashed_messages(with_categories=true) %}{% for
+      category,message in messages %}
+      <div class="flash">{{ message }}</div>
+      {% endfor %}{% endwith %} {% if db_error %}
+      <div class="card">{{ db_error }}</div>
+      {% endif %} {% for item in comments %}
+      <div class="card">
+        <strong>{{ item.name }}</strong>
+        <span class="muted"
+          >· {{ item.created_at_display }} · Status: {{ item.status }}</span
+        >
+        <p class="comment">{{ item.comment }}</p>
+        <div class="actions">
+          {% if item.status != "approved" %}
+          <form
+            method="post"
+            action="{{ url_for('approve_comment', comment_id=item.id) }}"
+          >
+            <input
+              type="hidden"
+              name="csrf_token"
+              value="{{ csrf_token() }}"
+            /><button class="approve">Approve</button>
+          </form>
+          {% endif %}
+          <form
+            method="post"
+            action="{{ url_for('delete_comment', comment_id=item.id) }}"
+            onsubmit="return confirm('Delete this comment permanently?');"
+          >
+            <input
+              type="hidden"
+              name="csrf_token"
+              value="{{ csrf_token() }}"
+            /><button class="delete">Delete</button>
+          </form>
+        </div>
+      </div>
+      {% else %}
+      <div class="card">No comments found.</div>
+      {% endfor %}
+      <p><a href="{{ url_for('index') }}">← View public blog</a></p>
+    </div>
+  </body>
 </html>
