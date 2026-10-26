@@ -85,24 +85,23 @@
         box-shadow: 0 20px 60px #0002;
       }
       .hero {
-        padding: 30px;
+        padding: 15px;
         background: linear-gradient(135deg, #123b53, #14253c 60%, #17203a);
         border-bottom: 1px solid var(--line);
       }
+      .hero h1 {
+        margin: 0;
+        font-size: 1.5rem;
+      }
       .eyebrow {
         color: var(--accent);
-        font-size: 0.78rem;
+        font-size: 0.7rem;
         font-weight: 800;
         letter-spacing: 0.14em;
       }
-      .hero h1 {
-        font-size: clamp(1.8rem, 4vw, 2.65rem);
-        line-height: 1.12;
-        margin: 12px 0;
-      }
       .meta {
         color: var(--muted);
-        font-size: 0.88rem;
+        font-size: 0.6rem;
       }
       .article {
         padding: 26px 30px;
@@ -151,7 +150,7 @@
       input,
       textarea {
         width: 100%;
-        padding: 12px 13px;
+        padding: 5px 8px;
         border-radius: 10px;
         border: 1px solid #344961;
         background: #091522;
@@ -174,7 +173,7 @@
         background: var(--accent);
         color: #062126;
         font-weight: 800;
-        padding: 12px 17px;
+        padding: 7px 11px;
         cursor: pointer;
       }
       button:hover {
@@ -265,8 +264,7 @@
   <body>
     <div class="wrap">
       <header class="top">
-        <div class="brand">AI <span>BREACH</span> TRACKER</div>
-        <div class="tag">AI · PRIVACY · SECURITY</div>
+        <div class="brand">TRACKER </div>
       </header>
 
       {% with messages = get_flashed_messages(with_categories=true) %} {% if
@@ -289,20 +287,12 @@
             <h2>{{ section.heading }}</h2>
             <p>{{ section.body }}</p>
             {% endfor %}
-            <div class="note">
-              <strong>Quick tip:</strong> Never publish API keys or passwords in
-              prompts, source code, screenshots, or public repositories.
-            </div>
           </div>
         </article>
 
         <section class="panel" id="comments">
           <div class="comments-head">
-            <h2>Community comments</h2>
-            <p>
-              Share a useful thought about AI security. Comments appear after
-              moderation.
-            </p>
+            <h2>Comments</h2>
           </div>
           <form
             class="form"
@@ -327,7 +317,7 @@
               required
               placeholder="What should people know about AI data breaches?"
             ></textarea>
-            <button type="submit">Submit comment ↗</button>
+            <button type="submit">Submit</button>
           </form>
 
           {% if db_error %}
@@ -350,10 +340,7 @@
           </div>
         </section>
       </main>
-      <footer class="footer">
-        AI Breach Tracker · Think before you share sensitive data. ·
-        <a href="{{ url_for('admin_login') }}">Admin</a>
-      </footer>
+      
     </div>
   </body>
 </html>
