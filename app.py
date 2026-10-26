@@ -60,7 +60,6 @@ def get_client_ip():
     if not raw_ip:
         return None
 
-    # Normalize IPv4-mapped IPv6 addresses.
     try:
         parsed = ipaddress.ip_address(raw_ip)
         if isinstance(parsed, ipaddress.IPv6Address):
@@ -87,7 +86,6 @@ def lookup_location(ip):
     try:
         address = ipaddress.ip_address(ip)
 
-        # Don't geolocate localhost, private or reserved addresses.
         if not address.is_global:
             return result
 
@@ -110,7 +108,6 @@ def lookup_location(ip):
         geoip2.errors.AddressNotFoundError,
         geoip2.errors.GeoIP2Error,
     ):
-        # Unknown IP, invalid input or unavailable GeoIP record.
         pass
 
     return result
