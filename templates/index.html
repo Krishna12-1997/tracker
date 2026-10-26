@@ -309,7 +309,7 @@
             action="{{ url_for('create_comment') }}"
             method="post"
           >
-            <input type="hidden" name="csrf_token" value="{{ csrf_token }}" />
+            <input type="hidden" name="csrf_token" value="{{ csrf_token() }}" />
             <label for="name">Your name</label>
             <input
               id="name"

@@ -174,7 +174,7 @@ def index():
 @app.route("/api/comments", methods=["POST"])
 @limiter.limit("5 per minute")
 def create_comment():
-    # Accept both JSON clients (existing API) and the homepage HTML form.
+    
     if request.is_json:
         data = request.get_json(silent=True) or {}
         name = data.get("name")
