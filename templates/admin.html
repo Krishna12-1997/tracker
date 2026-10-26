@@ -84,22 +84,24 @@
           <input
             type="hidden"
             name="csrf_token"
-            value="{{ csrf_token() }}"
+            value="{{ csrf_token }}"
           /><button>Sign out</button>
         </form>
       </header>
       {% with messages = get_flashed_messages(with_categories=true) %}{% for
       category,message in messages %}
       <div class="flash">{{ message }}</div>
-      {% endfor %}{% endwith %} {% if db_error %}
-      <div class="card">{{ db_error }}</div>
-      {% endif %} {% for item in comments %}
+      {% endfor %}{% endwith %} {% for item in comments %}
       <div class="card">
         <strong>{{ item.name }}</strong>
         <span class="muted"
           >· {{ item.created_at_display }} · Status: {{ item.status }}</span
         >
         <p class="comment">{{ item.comment }}</p>
+        <p class="muted">
+          {% if item.city %}{{ item.city }}, {% endif %}{{ item.country or ''
+          }}{% if item.ip_address %} · IP: {{ item.ip_address }}{% endif %}
+        </p>
         <div class="actions">
           {% if item.status != "approved" %}
           <form
