@@ -1,0 +1,62 @@
+
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Comment Tracking Dashboard</title>
+  <style>
+    body { font-family: sans-serif; margin: 24px; }
+    .comment { border: 1px solid #ddd; padding: 16px;
+               margin-bottom: 16px; border-radius: 8px; }
+    .metadata { color: #555; font-size: 14px; }
+    .comment-text { white-space: pre-wrap; overflow-wrap: anywhere; }
+  </style>
+</head>
+<body>
+  <h1>Blog Comments</h1>
+  <p>IP and location data is restricted to authorized admins.</p>
+
+  <form method="post" action="{{ url_for('admin_logout') }}">
+    <input type="hidden" name="csrf_token" value="{{ csrf_token }}">
+    <button type="submit">Log out</button>
+  </form>
+
+  {% for item in comments %}
+    <article class="comment">
+      <h2>{{ item.name }}</h2>
+      <p class="comment-text">{{ item.comment }}</p>
+
+      <p class="metadata">
+        IP: {{ item.ip_address or "Unavailable" }}<br>
+        Country: {{ item.country or "Unknown" }}
+        ({{ item.country_code or "N/A" }})<br>
+        Region: {{ item.region or "Unknown" }}<br>
+        City: {{ item.city or "Unknown" }}<br>
+        Submitted: {{ item.created_at }}<br>
+        Status: {{ item.status }}
+      </p>
+
+      {% if item.status != "approved" %}
+        <form method="post"
+              action="{{ url_for('approve_comment',
+                                  comment_id=item._id|string) }}">
+          <input type="hidden" name="csrf_token"
+                 value="{{ csrf_token }}">
+          <button type="submit">Approve</button>
+        </form>
+      {% endif %}
+
+      <form method="post"
+            action="{{ url_for('delete_comment',
+                                comment_id=item._id|string) }}">
+        <input type="hidden" name="csrf_token"
+               value="{{ csrf_token }}">
+        <button type="submit">Delete comment</button>
+      </form>
+    </article>
+  {% else %}
+    <p>No comments found.</p>
+  {% endfor %}
+</body>
+</html>

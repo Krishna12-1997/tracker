@@ -1,0 +1,7 @@
+Flask
+Flask-PyMongo
+Flask-Login
+geoip2
+python-dotenv
+Flask-Limiter
+gunicorn
